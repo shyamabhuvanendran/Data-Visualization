@@ -1,0 +1,162 @@
+<html>
+<head>
+    <title>Beef Demand Data Visualization </title>
+    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+    <script type="text/javascript">        
+        google.load('visualization', '1.0', { 'packages': ['controls'] });
+		google.load('visualization', '1.0', {packages:['corechart']})
+        google.setOnLoadCallback(queryData);
+
+        // Sending query to the Google Spreadsheet at https://docs.google.com/spreadsheets/d/1E-YlA6jCJdMHiStdgcQ0o0N16OOG8h4klBgZtbwZVjc/ which contains the Beef Demand data.  
+        function queryData() {
+            var query = new google.visualization.Query(
+                'https://docs.google.com/spreadsheets/d/1E-YlA6jCJdMHiStdgcQ0o0N16OOG8h4klBgZtbwZVjc/gviz/tq?tq=');
+            query.send(handleQueryResponse);
+        }
+
+        // Function that recives data from the google spreadsheet at https://docs.google.com/spreadsheets/d/1E-YlA6jCJdMHiStdgcQ0o0N16OOG8h4klBgZtbwZVjc/
+        function handleQueryResponse(response) {
+            if (response.isError()) {
+                alert('Error in query: ' + response.getMessage() + ' '
+                 + response.getDetailedMessage());
+                return;
+            }
+
+            // Retrieve data from the Google Spreadsheet response if there is no error.
+            var dataTable = response.getDataTable();
+			
+			//Create Charts
+            // Create table chart to display the spreadsheet data.
+            var tableChart = new google.visualization.ChartWrapper({
+                'chartType': 'Table',
+                'containerId': 'tableChart',
+                'view': { 'columns': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] }
+            });
+            
+			//Create bar chart to display Inflation adjusted Beef and Chicken retail price per pound data.
+			var barChart = new google.visualization.ChartWrapper({
+                'chartType': 'BarChart',
+                'containerId': 'bar_chart_div',
+                'view': { 'columns': [0, 6, 7] },
+                'options': {
+                    hAxis: { title: 'Beef and Chicken Price per Pound' , format: '###'},
+                    vAxis: { title:'Year', format: '###'},                    
+                   title: 'Inflation adjusted Beef and Chicken retail price per pound',  
+					seriesType: 'bars',
+                }
+            });
+			
+			//Create Area Chart to show the comparison of Beef Consumption in pounds and Price per pound for each year.
+			var areaChart = new google.visualization.ChartWrapper({
+                'chartType': 'AreaChart',
+                'containerId': 'area_chart_div',
+                'view': { 'columns': [0, 2, 3] },	
+                'options': {
+                    hAxis: { title: 'Year', format: '###'},
+                    vAxis: { title:'Beef Price Per Pound & Beef Consumption in Pounds', format:'###'},                    
+                   title: 'Beef Consumption in pounds and Price per pound Comparison',  
+                }
+            });
+			
+			//Create Controls
+			//Create year filter to filter years
+			var yearFilter = new google.visualization.ControlWrapper({
+                'controlType': 'CategoryFilter',
+                'containerId': 'year_filter_div',
+                'options': {
+                    'filterColumnLabel': 'Year',
+					'format':'###',
+                    'ui': {
+                        'labelStacking': 'vertical',
+                        'allowTyping': true,
+                        'allowMultiple': true,
+                    }
+                }
+            });
+
+			//Create pricefilter to filter Inflation Adjusted Beef Price
+			var priceFilter = new google.visualization.ControlWrapper({
+                'width': 1600,
+                'height': 1200,
+                'controlType': 'NumberRangeFilter',
+                'containerId': 'price_filter_div',
+                'options': {
+                    'filterColumnIndex': '7',
+                    ui: { 'labelStacking': 'vertical', 'label': 'Inflation Adjusted Beef Price' }
+                }
+            });
+			
+			//Create CPI filter to filter Consumer Price Index for food
+			var cpiFilter = new google.visualization.ControlWrapper({
+                'width': 1600,
+                'height': 1200,
+                'controlType': 'NumberRangeFilter',
+                'containerId': 'cpi_filter_div',
+                'options': {
+                    'filterColumnIndex': '4',
+                    ui: { 'labelStacking': 'vertical', 'label': 'Consumer Price Index for food' }
+                }
+            });
+			
+			//Create DPI filter to filter Disposable Personal Income per capita.
+			var dpiFilter = new google.visualization.ControlWrapper({
+                'width': 1600,
+                'height': 1200,
+                'controlType': 'NumberRangeFilter',
+                'containerId': 'dpi_filter_div',
+                'options': {
+                    'filterColumnIndex': '5',
+                    ui: { 'labelStacking': 'vertical', 'label': 'Disposable Personal Income per capita (dollars)' }
+                }
+            });
+			
+
+            // Create a dashboard
+            var dashboard = new google.visualization.Dashboard(document.getElementById('dashboard_div'));
+
+            // Bind controls with charts.
+            dashboard.bind([yearFilter, priceFilter, cpiFilter, dpiFilter],
+                        [tableChart, barChart, areaChart]);
+
+            // Draw the dashboard. 
+            dashboard.draw(dataTable);
+        }
+    </script>
+</head>
+
+
+<body>
+    <h2>Beef Demand Data Dashboard</h2>
+    <div id="dashboard_div">
+        <table>
+            <tr>
+                <td>
+					<div id="year_filter_div" style="width: 400px">
+                    </div>
+					<br />
+					<div id="price_filter_div" style="width: 400px">
+                    </div>
+					<br />
+					<div id="cpi_filter_div" style="width: 400px">
+                    </div>
+					<br />
+					<div id="dpi_filter_div" style="width: 400px">
+                    </div>
+					<br />
+                </td>
+                <td>
+                    <div id="tableChart" style="height: 305px; width: 803px; border-style: groove;">
+                    </div>
+					<br />
+					<div id="bar_chart_div" style="height: 500px; width: 780px;">
+                    </div>
+					<br />
+					<div id="area_chart_div" style="height: 400px; width: 750px;">
+                    </div>
+					<br />
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
