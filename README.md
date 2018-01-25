@@ -24,7 +24,7 @@ Google Charts.html - Creates visualizatiojs using Google Charts.
 
 *******************
 
-Google Maps API.html - Creates Visualizations using google map api.
+Google Maps API.html - Creates Visualizations using google maps api.
 
 *********************
 
