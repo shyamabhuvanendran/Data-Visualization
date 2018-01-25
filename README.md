@@ -4,9 +4,11 @@ Using Google Charts, Google Maps API, Tableau, d3.js and R to create data visual
 
 *******************
 
-d3js.html - Has the d3.js code to create visualizations. Put the required input JSON file in the server (same folder as the d3js.html file). While running the code, enter the file name, adjust force directed graph parameters (if required) and click on visualize to view the graph.
+d3js.html - Creates d3.js visualizations. Here you can customize the force directed parameters of the graph. Put the required input JSON file in the server (same folder as the d3js.html file). While running the code, enter the file name, adjust force directed graph parameters and click on visualize to view the graph.
 
-Screenshots_d3js.pdf - Has the some of the visulizations created using this code.
+Sample input files you can use - football.json, dolphins.json, celegansneural.json
+
+Screenshots_d3js.pdf - Has some of the visulizations created using this.
 
 *******************
 
